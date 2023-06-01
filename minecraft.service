@@ -1,0 +1,33 @@
+[Unit]
+Description=Minecraft server service
+Documentation=https://github.com/Monrunflash/minecraft-server-assets
+Wants=network.target
+After=local-fs.target network.target
+
+[Service]
+User=minecraft
+Group=minecraft
+
+# Working directory where the server files are located
+# Adjust the path if necessary
+WorkingDirectory=/opt/minecraft/minecraft-server
+
+# Command to start the Minecraft server
+ExecStart=/usr/bin/java -Xmx10024M -Xms10024M -jar server.jar nogui
+
+# Executed after the service has started
+# It stores the main PID of the service
+ExecStartPost=/bin/sh -c 'systemctl show -p MainPID --value minecraft.service > /opt/minecraft/minecraft.pid'
+PIDFile=/opt/minecraft/minecraft.pid
+
+# Exit status codes indicating successful termination
+SuccessExitStatus=1 143
+
+# Restart the service in case of failure
+Restart=on-failure
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target
+Alias=minecraft.service
+
